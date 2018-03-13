@@ -4,9 +4,15 @@
 
 ## Setup
 
+### Setup Cloud Functions
+
+You'll need to enable billing, etc from within the cloud console as well as install `gcloud` locally.
+
 ```sh
 gcloud beta functions deploy event --trigger-http
 ```
+
+### Setup BigQuery
 
 Create a BigQuery dataset named `analytics` and a table named `event` with the schema:
 
@@ -15,6 +21,8 @@ Create a BigQuery dataset named `analytics` and a table named `event` with the s
 | type      | STRING    | REQUIRED   |
 | timestamp | TIMESTAMP | REQUIRED   |
 | data      | STRING    | NULLABLE   |
+
+### Add js scripts
 
 ```html
 <script src="chord.min.js"></script>
@@ -30,4 +38,4 @@ chord.event('page');
 
 ## Optional
 
-Build the minimized JS with: `npm run build`
+Build the minimized JS yourself with: `npm run build`
