@@ -4,25 +4,29 @@
 
 ## Setup
 
-### Setup Cloud Functions
+Setup should take <10 minutes.
 
-You'll need to enable billing, etc from within the cloud console as well as install `gcloud` locally.
+1. Signup for GCP and enable billing (needed for BigQuery)
+
+2. Install `gcloud` SDK locally
+
+3. Clone this repo and from within the repo, run
 
 ```sh
 gcloud beta functions deploy event --trigger-http
 ```
 
-### Setup BigQuery
+4. Create BigQuery table `standard.events` from the BigQuery UI. Recommend that you partition by `created` column.
 
-Create a BigQuery dataset named `analytics` and a table named `event` with the schema:
+| Column     | Type      | Constraint |
+| ---------- | --------- | ---------- |
+| type       | STRING    | REQUIRED   |
+| created    | TIMESTAMP | REQUIRED   |
+| properties | STRING    | NULLABLE   |
 
-| Column    | Type      | Constraint |
-| --------- | --------- | ---------- |
-| type      | STRING    | REQUIRED   |
-| timestamp | TIMESTAMP | REQUIRED   |
-| data      | STRING    | NULLABLE   |
+5. Add js scripts
 
-### Add js scripts
+Build the minimized JS `npm run build` and add it to your frontend.
 
 ```html
 <script src="chord.min.js"></script>
@@ -36,6 +40,24 @@ chord.event('page');
 </script>
 ```
 
-## Optional
+6. Bonus: Create convenience views
 
-Build the minimized JS yourself with: `npm run build`
+Create a `standard.views` views for easier access to pageviews.
+
+Views are relatively intelligent, so they respect the date-partitioning of the original `standard.events` table, so it's just as performant.
+
+### `standard.views`
+
+```sql
+select
+	created
+	, json_extract_scalar(properties, '$.url') as url
+	, json_extract_scalar(properties, '$.referrer') as referrer
+	, json_extract_scalar(properties, '$.ip_address') as ip_address
+	, json_extract_scalar(properties, '$.user_agent') as user_agent
+	, json_extract_scalar(properties, '$.session_id') as session_id
+	, json_extract_scalar(properties, '$.viewer_id') as viewer_id
+	, json_extract_scalar(properties, '$.user_id') as user_id
+	, properties
+from `<gcp-project-id>.standard.events`
+```

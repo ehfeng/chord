@@ -13,16 +13,17 @@ exports.event = (req, res) => {
       res.status(400).send("Invalid event type " + body.type)
       return;
     }
-    rows = [{type: body.type, timestamp: Date.now() / 1000, data: JSON.stringify(body.data)}];
+    rows = [{type: body.type, created: Date.now() / 1000, properties: JSON.stringify(body.properties)}];
 
-    bigquery.dataset('analytics').table('event').insert(rows)
+    bigquery.dataset('standard').table('events').insert(rows)
       .then(() => {
         res.set('Access-Control-Allow-Origin', '*').set('Access-Control-Allow-Methods', 'OPTIONS, POST').status(200);
         res.status(200).send();
         return;
       })
       .catch(err => {
-        res.status(400).send(err);
+        console.error(err);
+        res.status(400).send('BigQuery insertion failed. Check your standard.events table schema.');
         return;
       });
   } else {

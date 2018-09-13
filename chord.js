@@ -60,6 +60,7 @@ const getContext = () => ({
     referrer: document.referrer,
     title: document.title,
     sent_at: Date.now().toString(),
+    user_agent: navigator.userAgent,
 })
 
 const event = (type, extraData) => {
@@ -77,7 +78,7 @@ const event = (type, extraData) => {
 
   const xhr = new XMLHttpRequest()
   xhr.open("POST", window.chord.endpoint)
-  xhr.send(JSON.stringify({type: type, data: data}))
+  xhr.send(JSON.stringify({type: type, properties: data}))
 }
 
 const identify = userId => {
@@ -85,3 +86,7 @@ const identify = userId => {
 }
 
 window.chord = {event, endpoint, identify}
+
+// _instrumentBreadcrumbs, wrapEventTarget
+// https://github.com/getsentry/sentry-javascript/blob/master/packages/raven-js/src/raven.js
+// or https://github.com/getsentry/sentry-javascript/blob/master/packages/browser/src/integrations/breadcrumbs.ts
