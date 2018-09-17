@@ -78,7 +78,8 @@ const event = (type, extraData) => {
 
   const xhr = new XMLHttpRequest()
   xhr.open("POST", window.chord.endpoint)
-  xhr.send(JSON.stringify({type: type, properties: data}))
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.send(JSON.stringify(data))
 }
 
 const identify = userId => {
