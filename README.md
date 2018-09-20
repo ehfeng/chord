@@ -2,8 +2,6 @@
 
 [Simple analytics](https://en.wikipedia.org/wiki/Circular_segment) for collecting event data (like pageviews) on top of Google Cloud Functions and BigQuery.
 
-TODOs: Support BigQuery and Postgres, BULK insert
-
 Right now, it only supports `standard.events` table.
 
 ## Setup
